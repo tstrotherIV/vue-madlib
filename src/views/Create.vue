@@ -5,19 +5,23 @@
       <v-btn @click="getTemplate">Get template</v-btn>
     </v-container>
     <v-container v-if="this.prompts">
-      <v-text-field
-        v-for="(blanks, index) in prompts.blanks"
-        :key="index"
-        :placeholder="blanks"
-        v-model="prompts.inputs[index]"
-        outlined
-      ></v-text-field>
-      <v-btn>Save Answers</v-btn>
+      <v-form @submit.prevent="saveInputs">
+        <v-text-field
+          v-for="(blanks, index) in prompts.blanks"
+          :key="index"
+          :placeholder="blanks"
+          v-model="prompts.inputs[index]"
+          outlined
+        ></v-text-field>
+        <v-btn type="submit">Save Answers</v-btn>
+      </v-form>
     </v-container>
   </div>
 </template>
 
 <script>
+import { db } from "../firebase";
+
 export default {
   methods: {
     async getTemplate() {
@@ -28,6 +32,12 @@ export default {
           this.prompts = data;
           this.prompts.inputs = [];
         });
+    },
+    async saveInputs() {
+      await db.collection("userInputs").add({
+        data1: "test1",
+        data2: "test2",
+      });
     },
   },
   data() {
